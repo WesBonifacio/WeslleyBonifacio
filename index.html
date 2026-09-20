@@ -1013,6 +1013,109 @@
             font-size: 11px;
         }
 
+        /* Feedbacks */
+        #feedbacks {
+            background:
+                radial-gradient(circle at 15% 20%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 32%),
+                linear-gradient(180deg, var(--bg-soft), var(--bg));
+            overflow: hidden;
+        }
+
+        .feedback-heading { max-width: 820px; margin-bottom: 48px; }
+
+        .feedback-intro {
+            color: var(--text);
+            max-width: 760px;
+            font-size: 16px;
+        }
+
+        .feedback-intro strong { color: var(--heading); }
+
+        .feedback-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+            align-items: start;
+        }
+
+        .feedback-card {
+            position: relative;
+            padding: 12px;
+            border: 1px solid var(--line);
+            background: linear-gradient(145deg, color-mix(in srgb, var(--bg-card) 92%, transparent), color-mix(in srgb, var(--accent) 5%, transparent));
+            box-shadow: 0 25px 70px var(--shadow);
+            overflow: hidden;
+            transition: transform .45s cubic-bezier(.16,1,.3,1), border-color .35s ease, box-shadow .45s ease;
+        }
+
+        .feedback-card::before {
+            content: "“";
+            position: absolute;
+            z-index: 2;
+            top: -16px;
+            left: 18px;
+            font-family: 'Playfair Display', serif;
+            font-size: 90px;
+            line-height: 1;
+            color: color-mix(in srgb, var(--accent) 78%, transparent);
+            text-shadow: 0 8px 25px color-mix(in srgb, var(--accent) 18%, transparent);
+            pointer-events: none;
+        }
+
+        .feedback-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+            opacity: 0;
+            transition: opacity .35s ease;
+            pointer-events: none;
+        }
+
+        .feedback-card:hover {
+            transform: translateY(-8px) rotate(-.35deg);
+            border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+            box-shadow: 0 35px 90px color-mix(in srgb, var(--shadow) 90%, transparent), 0 0 35px color-mix(in srgb, var(--accent) 7%, transparent);
+        }
+
+        .feedback-card:hover::after { opacity: 1; }
+
+        .feedback-card:nth-child(even):hover { transform: translateY(-8px) rotate(.35deg); }
+
+        .feedback-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 4px;
+            background: var(--bg);
+            transition: transform .7s cubic-bezier(.16,1,.3,1), filter .5s ease;
+            filter: saturate(.9) contrast(1.02);
+        }
+
+        .feedback-card:hover img { transform: scale(1.012); filter: saturate(1) contrast(1.04); }
+
+        .feedback-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 13px 6px 4px;
+            color: var(--muted);
+            font-size: 9px;
+            letter-spacing: 1.7px;
+            text-transform: uppercase;
+        }
+
+        .feedback-meta span:first-child { color: var(--accent); }
+
+        .feedback-note {
+            margin-top: 34px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+            letter-spacing: .4px;
+        }
+
         /* Contato */
         #contato { text-align: center; padding-bottom: 75px; }
 
@@ -1192,6 +1295,8 @@
             .story-image img { height: 450px; }
             .stats { grid-template-columns: 1fr; }
 
+            .feedback-grid { grid-template-columns: 1fr; }
+
 
             .project-card {
                 grid-template-columns: 1fr;
@@ -1242,7 +1347,44 @@
                 transition-duration: .01ms !important;
             }
         }
-    </style>
+    
+/* Feedback lightbox */
+.feedback-card img { cursor: zoom-in; }
+.feedback-lightbox {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  padding: 32px;
+  background: rgba(0,0,0,.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity .3s ease, visibility .3s ease;
+}
+.feedback-lightbox.active { opacity: 1; visibility: visible; pointer-events: auto; }
+.feedback-lightbox img {
+  display: block; max-width: min(92vw, 1100px); max-height: 88vh;
+  width: auto; height: auto; object-fit: contain;
+  border: 1px solid var(--accent); border-radius: 10px;
+  box-shadow: 0 0 0 1px rgba(212,175,55,.15), 0 30px 90px rgba(0,0,0,.65);
+  transform: scale(.94); transition: transform .35s cubic-bezier(.2,.8,.2,1);
+}
+.feedback-lightbox.active img { transform: scale(1); }
+.feedback-lightbox-close {
+  position: absolute; top: 20px; right: 24px;
+  width: 46px; height: 46px; border: 1px solid var(--accent);
+  border-radius: 50%; background: rgba(0,0,0,.45); color: var(--accent);
+  font-size: 28px; line-height: 1; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: .25s ease;
+}
+.feedback-lightbox-close:hover { background: var(--accent); color: #000; transform: rotate(90deg); }
+@media (max-width: 600px) {
+  .feedback-lightbox { padding: 16px; }
+  .feedback-lightbox img { max-width: 96vw; max-height: 86vh; }
+  .feedback-lightbox-close { top: 12px; right: 12px; width: 42px; height: 42px; }
+}
+
+</style>
 </head>
 
 <body>
@@ -1256,6 +1398,7 @@
                 <li><a href="#experiencia">Trajetória</a></li>
                 <li><a href="#proposito">Propósito</a></li>
                 <li><a href="#projetos">Projetos</a></li>
+                <li><a href="#feedbacks">Feedbacks</a></li>
                 <li><a href="#contato">Contato</a></li>
             </ul>
 
@@ -1281,6 +1424,9 @@
         </a>
         <a class="progress-item" href="#projetos" data-section="projetos">
             <span class="progress-name">Projetos</span><span class="progress-dot"></span>
+        </a>
+        <a class="progress-item" href="#feedbacks" data-section="feedbacks">
+            <span class="progress-name">Feedbacks</span><span class="progress-dot"></span>
         </a>
         <a class="progress-item" href="#contato" data-section="contato">
             <span class="progress-name">Contato</span><span class="progress-dot"></span>
@@ -1506,6 +1652,44 @@ A experiência e a necessidade mudaram minha relação com dinheiro e me leravam
                         <p class="project-note">Abra o gerador e experimente criar seu próximo prompt.</p>
                     </div>
                 </article>
+            </div>
+        </section>
+
+        <section id="feedbacks">
+            <div class="container">
+                <div class="feedback-heading reveal">
+                    <div class="section-label">Feedbacks</div>
+                    <h2 class="section-title">Palavras que <span>ficaram.</span></h2>
+                    <p class="feedback-intro">
+                        Feedbacks espontâneos que recebi de clientes depois que compartilhei a notícia de que fui aprovado no concurso público. <strong>São mensagens que guardo com carinho porque representam um pouco do caminho percorrido.</strong>
+                    </p>
+                </div>
+
+                <div class="feedback-grid">
+                    <figure class="feedback-card reveal">
+                        <img src="https://i.imgur.com/4fT7DuZ.png" alt="Feedback recebido após a aprovação no concurso público" loading="lazy" referrerpolicy="no-referrer">
+                        <figcaption class="feedback-meta"><span>Feedback que guardo com muito carinho de uma cliente veterinária</span></figcaption>
+                    </figure>
+                    <figure class="feedback-card reveal">
+                        <img src="https://i.imgur.com/m75S1xV.png" alt="Feedback recebido após a aprovação no concurso público" loading="lazy" referrerpolicy="no-referrer">
+                        <figcaption class="feedback-meta"><span>Uma cliente que trabalhava em escritório de contabilidade</span></figcaption>
+                    </figure>
+                    <figure class="feedback-card reveal">
+                        <img src="https://i.imgur.com/AntRlpK.png" alt="Feedback recebido após a aprovação no concurso público" loading="lazy" referrerpolicy="no-referrer">
+                        <figcaption class="feedback-meta"><span>Um client que trabalha no ramo imobiliário</span></figcaption>
+                    </figure>
+                    <figure class="feedback-card reveal">
+                        <img src="https://i.imgur.com/4JYzCLp.png" alt="Feedback recebido após a aprovação no concurso público" loading="lazy" referrerpolicy="no-referrer">
+                        <figcaption class="feedback-meta"><span>Uma cliente que trabalhava no exterior</span></figcaption>
+                    </figure>
+                    <figure class="feedback-card reveal">
+                        <img src="https://i.imgur.com/tajgVQv.png" alt="Feedback recebido após a aprovação no concurso público" loading="lazy" referrerpolicy="no-referrer">
+                        <figcaption class="feedback-meta"><span>Um casal, sendo ela Podóloga e ele mecânico</span></figcaption>
+                    </figure>
+
+                </div>
+
+                <p class="feedback-note reveal">Tive o cuidado de censurar o nome de todos, como forma de respeitar a privacidade de cada pessoa que me enviou uma mensagem.</p>
             </div>
         </section>
 
@@ -1748,5 +1932,44 @@ A experiência e a necessidade mudaram minha relação com dinheiro e me leravam
             });
         });
     </script>
+
+<!-- Feedback image lightbox -->
+<div class="feedback-lightbox" id="feedbackLightbox" aria-hidden="true" role="dialog" aria-label="Imagem ampliada do feedback">
+  <button class="feedback-lightbox-close" type="button" aria-label="Fechar imagem">&times;</button>
+  <img id="feedbackLightboxImage" src="" alt="Feedback ampliado">
+</div>
+
+
+<script>
+// Feedback lightbox
+(function () {
+  const lightbox = document.getElementById('feedbackLightbox');
+  const lightboxImage = document.getElementById('feedbackLightboxImage');
+  const closeButton = lightbox?.querySelector('.feedback-lightbox-close');
+  const feedbackImages = document.querySelectorAll('.feedback-card img');
+
+  if (!lightbox || !lightboxImage) return;
+
+  function openLightbox(img) {
+    lightboxImage.src = img.currentSrc || img.src;
+    lightboxImage.alt = img.alt || 'Feedback ampliado';
+    lightbox.classList.add('active');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('active');
+    lightbox.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    setTimeout(() => { if (!lightbox.classList.contains('active')) lightboxImage.src = ''; }, 300);
+  }
+
+  feedbackImages.forEach(img => img.addEventListener('click', () => openLightbox(img)));
+  closeButton?.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && lightbox.classList.contains('active')) closeLightbox(); });
+})();
+</script>
 </body>
 </html>
